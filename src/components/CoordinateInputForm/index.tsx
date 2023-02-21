@@ -1,12 +1,26 @@
 import { useState } from "react";
+import { GetMapDataByBoundingBoxParams } from "../../services/api/endpoints";
+import { fetchMapDataByBoundingBox } from "../../services/api/operations";
 import CoordinateInputElement from "../CoordinateInputElement";
 import styles from "./index.module.css";
+import type { FeatureCollection, Geometry, GeoJsonProperties } from "geojson";
+import Tree from "../Tree";
 
 const CoordinateInputForm = () => {
   const [left, setLeft] = useState("");
   const [bottom, setBottom] = useState("");
   const [right, setRight] = useState("");
   const [top, setTop] = useState("");
+  const [fetchedData, setFetchedData] = useState<FeatureCollection<
+    Geometry,
+    GeoJsonProperties
+  > | null>(null);
+
+  const submitData = async (params: GetMapDataByBoundingBoxParams) => {
+    const data = await fetchMapDataByBoundingBox(params);
+    
+    setFetchedData(data);
+  };
 
   return (
     <section className={styles.coordinateInputForm}>
@@ -15,6 +29,8 @@ const CoordinateInputForm = () => {
         className={styles.coordinateInputForm__form}
         onSubmit={(event) => {
           event.preventDefault();
+
+          submitData({ left, bottom, right, top });
         }}
       >
         <CoordinateInputElement
@@ -38,8 +54,10 @@ const CoordinateInputForm = () => {
           handleInputChange={setTop}
         />
 
-        <button type="submit">Submit</button>
+        <button type="submit" className={styles.coordinateInputForm__submit}>Submit</button>
       </form>
+
+      {fetchedData && <Tree data={fetchedData} />}
     </section>
   );
 };

@@ -1,5 +1,4 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import CoordinateInputElement from "../CoordinateInputElement";
 
 const testLabel = "Test label:";
