@@ -15,11 +15,14 @@ const CoordinateInputForm = () => {
     Geometry,
     GeoJsonProperties
   > | null>(null);
+  const [isFetching, setIsFetching] = useState(false);
 
   const submitData = async (params: GetMapDataByBoundingBoxParams) => {
+    setIsFetching(true);
     const data = await fetchMapDataByBoundingBox(params);
-    
+
     setFetchedData(data);
+    setIsFetching(false);
   };
 
   return (
@@ -54,7 +57,13 @@ const CoordinateInputForm = () => {
           handleInputChange={setTop}
         />
 
-        <button type="submit" className={styles.coordinateInputForm__submit}>Submit</button>
+        {isFetching ? (
+          <p>Data fetching in progress...</p>
+        ) : (
+          <button type="submit" className={styles.coordinateInputForm__submit}>
+            Submit
+          </button>
+        )}
       </form>
 
       {fetchedData && <Tree data={fetchedData} />}
