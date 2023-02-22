@@ -12,15 +12,19 @@ const getRequest = async (url: string, json?: boolean) => {
 
   try {
     const response = await fetch(url, options);
-
-    if (response) {
+    
+    if (response && response.ok) {
       if (response.headers?.get("content-type")?.includes("application/json")) {
         return await response.json();
       }
 
       return response;
+    } else {
+      throw new Error()
     }
-  } catch {}
+  } catch {
+    throw new Error()
+  }
 };
 
 export { getRequest };
