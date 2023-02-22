@@ -16,13 +16,21 @@ const CoordinateInputForm = () => {
     GeoJsonProperties
   > | null>(null);
   const [isFetching, setIsFetching] = useState(false);
+  const [error, setError] = useState(false);
 
   const submitData = async (params: GetMapDataByBoundingBoxParams) => {
-    setIsFetching(true);
-    const data = await fetchMapDataByBoundingBox(params);
+    try {
+      setError(false);
+      setFetchedData(null)
+      setIsFetching(true);
+      const data = await fetchMapDataByBoundingBox(params);
 
-    setFetchedData(data);
-    setIsFetching(false);
+      setFetchedData(data);
+    } catch (error) {
+      setError(true);
+    } finally {
+      setIsFetching(false);
+    }
   };
 
   return (
@@ -66,7 +74,8 @@ const CoordinateInputForm = () => {
         )}
       </form>
 
-      {fetchedData && <Tree data={fetchedData} />}
+      {error && <p>There was an error fetching the data... Please check the values you provided or try later</p>}
+      {!error && fetchedData && <Tree data={fetchedData} />}
     </section>
   );
 };
